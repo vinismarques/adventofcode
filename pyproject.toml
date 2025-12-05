@@ -8,3 +8,8 @@ dependencies = [
     "advent-of-code-data>=2.1.0",
     "python-dotenv>=1.2.1",
 ]
+
+
+[tool.ruff]
+line-length = 120
+target-version = "py314"
