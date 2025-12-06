@@ -11,7 +11,7 @@ def get_day_and_year() -> tuple[int, int]:
     """
     p = Path(__file__).resolve()
     # We look for two parent folder names that are both digit (year and day)
-    # e.g. .../2025/02/part_1.py
+    # e.g. .../2025/02/utils.py
     try:
         day_str = p.parent.name  # '02'
         year_str = p.parent.parent.name  # '2025'
