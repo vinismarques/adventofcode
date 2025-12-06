@@ -1,88 +1,58 @@
+import os
 from copy import deepcopy
 from typing import Any
 
 from dotenv import load_dotenv
-from utils import get_day_data
+from utils import DIRECTIONS_8, get_day_data, get_neighbors, pretty_print
 
 DEBUG = False
 
-# 8-directional neighbors (including diagonals)
-directions_8 = [
-    (-1, -1), (-1, 0), (-1, 1),
-    ( 0, -1),          ( 0, 1),
-    ( 1, -1), ( 1, 0), ( 1, 1)
-]  # fmt: off
 
+def find_accessibles(grid, directions) -> list[tuple[int, int, Any]]:
+    accessible_cells: list[tuple[int, int, Any]] = []
+    debug = os.getenv("DEBUG") or DEBUG
 
-def get_neighbors(m, i, j, directions) -> list[tuple[int, int, Any]]:
-    rows, cols = len(m), len(m[0])
-
-    neighbors = []
-    for offset_i, offset_j in directions:
-        n_i = i + offset_i
-        n_j = j + offset_j
-        if rows > n_i >= 0 and cols > n_j >= 0:
-            n_value = m[n_i][n_j]
-            neighbors.append((n_i, n_j, n_value))
-    return neighbors
-
-
-def pretty_print(m, targets: list[tuple] | None = None) -> None:
-    pretty_m = deepcopy(m)
-
-    for i in range(len(pretty_m)):
-        for j in range(len(pretty_m[i])):
-            value = pretty_m[i][j]
-            if targets and (i, j, value) in targets:
-                pretty_m[i][j] = "x"
-        print("".join(pretty_m[i]))
-    print("")
-
-
-def find_accessables(m) -> list[tuple[int, int, Any]]:
-    accessables: list[tuple[int, int, Any]] = []
-    for i in range(len(m)):
-        for j in range(len(m[i])):
-            value = m[i][j]
+    for i in range(len(grid)):
+        for j in range(len(grid[i])):
+            value = grid[i][j]
 
             if value != "@":
                 continue  # Not paper
 
-            neighbors = get_neighbors(m, i, j, directions=directions_8)
-            if DEBUG:
+            neighbors = get_neighbors(grid, i, j, directions)
+            if debug:
                 print("All neighbors:")
-                pretty_print(m, neighbors)
+                pretty_print(grid, neighbors)
 
             blocking_neighbors = []
-            for n_i, n_j, n_value in neighbors:
+            for ni, nj, n_value in neighbors:
                 if n_value == "@":
-                    blocking_neighbors.append((n_i, n_j, n_value))
-            if DEBUG:
+                    blocking_neighbors.append((ni, nj, n_value))
+            if debug:
                 print("Blocking neighbors:")
-                pretty_print(m, blocking_neighbors)
+                pretty_print(grid, blocking_neighbors)
 
             if len(blocking_neighbors) < 4:
-                accessables.append((i, j, value))
+                accessible_cells.append((i, j, value))
 
-    return accessables
+    return accessible_cells
 
 
 def main(data: str) -> None:
-    rows = data.splitlines()
-    m = [list(r) for r in rows]
+    grid = [list(r) for r in data.splitlines()]
     print("Original:")
-    pretty_print(m)
+    pretty_print(grid)
 
-    all_accessables = []
-    mutated_m = deepcopy(m)
-    while accessables := find_accessables(mutated_m):
-        all_accessables.extend(accessables)
+    all_accessibles = []
+    working_grid = deepcopy(grid)
+    while accessible_cells := find_accessibles(working_grid, directions=DIRECTIONS_8):
+        all_accessibles.extend(accessible_cells)
 
-        for i, j, value in accessables:
-            mutated_m[i][j] = "."
+        for i, j, value in accessible_cells:
+            working_grid[i][j] = "."
 
-    pretty_print(m, all_accessables)
-    answer = len(all_accessables)
+    pretty_print(grid, all_accessibles)
+    answer = len(all_accessibles)
     print(answer)
 
 

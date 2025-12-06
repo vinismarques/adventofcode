@@ -13,4 +13,7 @@ if __name__ == "__main__":
     load_dotenv()
 
     data = get_day_data()
+    #     data = r"""
+    # """.strip()  # Sample
+
     main(data)

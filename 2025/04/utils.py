@@ -1,8 +1,16 @@
+from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Sequence
 
 from aocd import get_data
+
+# 8-directional neighbors (including diagonals)
+DIRECTIONS_8 = [
+    (-1, -1), (-1, 0), (-1, 1),
+    ( 0, -1),          ( 0, 1),
+    ( 1, -1), ( 1, 0), ( 1, 1)
+]  # fmt: off
 
 
 def get_day_and_year() -> tuple[int, int]:
@@ -116,3 +124,28 @@ def monotonic_decreasing(seq: Sequence, k: int | None = None) -> list:
         stack.append(num)
 
     return stack[:k]
+
+
+def get_neighbors(grid, i, j, directions) -> list[tuple[int, int, Any]]:
+    rows, cols = len(grid), len(grid[0])
+
+    neighbors = []
+    for offset_i, offset_j in directions:
+        ni = i + offset_i
+        nj = j + offset_j
+        if rows > ni >= 0 and cols > nj >= 0:
+            n_value = grid[ni][nj]
+            neighbors.append((ni, nj, n_value))
+    return neighbors
+
+
+def pretty_print(grid, targets: list[tuple] | None = None) -> None:
+    pretty_m = deepcopy(grid)
+
+    for i in range(len(pretty_m)):
+        for j in range(len(pretty_m[i])):
+            value = pretty_m[i][j]
+            if targets and (i, j, value) in targets:
+                pretty_m[i][j] = "x"
+        print("".join(pretty_m[i]))
+    print("")
