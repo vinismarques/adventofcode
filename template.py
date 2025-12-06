@@ -2,12 +2,15 @@ from dotenv import load_dotenv
 from utils import get_day_data
 
 
-def main() -> None:
-    data = get_day_data()
+def main(data: str) -> None:
+    # Code here
 
-    print("Hello from adventofcode!\n\nData:", data)
+    answer = None
+    print(answer)
 
 
 if __name__ == "__main__":
     load_dotenv()
-    main()
+
+    data = get_day_data()
+    main(data)

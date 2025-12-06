@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Sequence
 
 from aocd import get_data
 
@@ -95,3 +95,24 @@ class CircularDoublyLinkedList:
             if cur.next == self.head:
                 raise ValueError(f"Node with data '{data}' not found")
             cur = cur.next
+
+
+def monotonic_decreasing(seq: Sequence, k: int | None = None) -> list:
+    """
+    Select k elements from seq (preserving order) to form the optimal subsequence.
+
+    Args:
+        seq: Input sequence
+        k: Number of elements to select
+    """
+    stack = []
+    to_remove = len(seq) - k if k else len(seq)
+
+    for num in seq:
+        # Remove elements that are smaller than current
+        while to_remove > 0 and stack and stack[-1] < num:
+            stack.pop()
+            to_remove -= 1
+        stack.append(num)
+
+    return stack[:k]

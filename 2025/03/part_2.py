@@ -1,5 +1,5 @@
 from dotenv import load_dotenv
-from utils import get_day_data
+from utils import get_day_data, monotonic_decreasing
 
 
 def find_max_joltage(bank: str, num_batteries: int) -> int:
@@ -25,7 +25,8 @@ def main(data: str) -> None:
 
     total_batteries = 12
     for bank in banks:
-        joltages.append(find_max_joltage(bank, total_batteries))
+        result = monotonic_decreasing(bank, total_batteries)
+        joltages.append(int("".join(result)))
 
     print(sum(joltages))
 
@@ -34,11 +35,11 @@ if __name__ == "__main__":
     load_dotenv()
 
     data = get_day_data()
-    # data = """
+    #     data = r"""
     # 987654321111111
     # 811111111111119
     # 234234234234278
     # 818181911112111
-    #     """.strip()
+    # """.strip()
 
     main(data)
