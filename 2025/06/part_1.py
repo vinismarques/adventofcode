@@ -1,11 +1,13 @@
 import re
+from functools import reduce
 from operator import add, mul, sub
+from typing import Any, Callable
 
 from dotenv import load_dotenv
 from utils import get_day_data
 
 
-def get_operation(op: str):
+def get_operation(op: str) -> Callable[[Any, Any], Any]:
     match op:
         case "*":
             return mul
@@ -28,14 +30,7 @@ def main(data: str) -> None:
     for col, op in enumerate(ops):
         op_func = get_operation(op)
         numbers = [int(row[col]) for row in rows]
-
-        op_total = 0
-        for idx, number in enumerate(numbers):
-            if idx == 0:
-                op_total = number
-            else:
-                op_total = op_func(op_total, number)
-
+        op_total = reduce(op_func, numbers)
         print(f"Total for operation '{op}': {op_total}")
         grand_total += op_total
 
